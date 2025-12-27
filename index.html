@@ -1,321 +1,312 @@
-import React, { useState } from 'react';
-import { 
-  Car, 
-  Settings, 
-  Droplets, 
-  Wind, 
-  Wrench, 
-  AlertTriangle, 
-  CheckCircle2, 
-  ArrowRight, 
-  ArrowLeft,
-  Info,
-  Package,
-  MapPin,
-  HelpCircle,
-  ShieldCheck,
-  Calendar
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תחזוקת יונדאי i20 - 478-97-603</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; }
+        .step-transition { transition: all 0.3s ease; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
 
-const App = () => {
-  const [step, setStep] = useState('dashboard'); 
-  const [currentTask, setCurrentTask] = useState(null);
-  const [taskProgress, setTaskProgress] = useState(0);
-  const [completedTasks, setCompletedTasks] = useState([]);
-
-  // Personal Car Details
-  const myCarDetails = {
-    model: 'Hyundai i20',
-    plateNumber: '478-97-603',
-    requiredPSI: '34',
-    insuranceCompany: 'איילון (הסתדרות המורים)',
-    insuranceType: 'חובה + מקיף מורחב',
-    insuranceExpiry: '30.11.2026'
-  };
-
-  const maintenanceTasks = [
-    { 
-      id: 'air', 
-      name: 'מילוי אוויר בגלגלים', 
-      icon: <Wind className="w-6 h-6" />, 
-      desc: `שמירה על לחץ אוויר של ${myCarDetails.requiredPSI} PSI ביונדאי שלך.`,
-      tools: 'מד לחץ אוויר (נמצא בתחנת דלק)',
-      specificTip: `זכור - ביונדאי i20 שלך (${myCarDetails.plateNumber}) הגדרת לחץ אוויר של ${myCarDetails.requiredPSI} PSI לכל הגלגלים.`,
-      steps: [
-        `בדוק את היעד: עבור הרכב שלך הגדרנו ${myCarDetails.requiredPSI} PSI כפי שביקשת.`,
-        'הסר את פקק הפלסטיק השחור הקטן מהונטיל (הצינורית הקטנה שבולטת מהגלגל).',
-        `במכונת האוויר בתחנה, כוון את המספר ל-${myCarDetails.requiredPSI}.`,
-        'הצמד את פיית הצינור לונטיל בחוזקה. תשמע "פססס" ואז צפצוף מהמכונה כשהיא מסיימת.',
-        'החזר את הפקק הקטן למקום כדי שלא יכנס לכלוך.'
-      ]
-    },
-    { 
-      id: 'oil', 
-      name: 'בדיקת שמן מנוע', 
-      icon: <Settings className="w-6 h-6" />, 
-      desc: 'איך לבדוק שהמנוע של היונדאי לא יתייבש.',
-      tools: 'מטלית או נייר סופג',
-      specificTip: "ביונדאי i20, ידית המדיד היא טבעת פלסטיק צהובה שנמצאת ממש במרכז המנוע. קל לזהות אותה.",
-      steps: [
-        'ודא שהרכב עומד במישור ושהמנוע כבוי וקר (לפחות 10 דקות אחרי נסיעה).',
-        'פתח את מכסה המנוע: משוך בידית שנמצאת למטה משמאל להגה, ואז הרם את המכסה והעמד אותו על המוט.',
-        'חפש ידית פלסטיק קטנה בצבע צהוב (זה המדיד). משוך אותה החוצה לגמרי.',
-        'נגב את המדיד עם נייר סופג - כרגע הוא מלוכלך ולא מדויק.',
-        'הכנס את המדיד חזרה עד הסוף ומשוך שוב. בדוק שהשמן נמצא בין שני החורים (L ו-F). אם הוא קרוב ל-L, חסר שמן!'
-      ]
-    },
-    { 
-      id: 'water', 
-      name: 'הוספת נוזל שמשות (מים לוישרים)', 
-      icon: <Droplets className="w-6 h-6" />, 
-      desc: 'מילוי נוזל כדי שתוכל לנקות את השמשה בזמן נסיעה.',
-      tools: 'מיכל נוזל שמשות כחול (קונים בכל סופר/תחנת דלק)',
-      specificTip: "שימי לב: מלאי רק נוזל שמשות כחול ייעודי. מים מהברז עלולים ליצור אבנית ולסתום את השפריצרים ביונדאי.",
-      steps: [
-        'פתח את מכסה המנוע (כמו בבדיקת השמן).',
-        'זהה את המכסה הכחול: עליו מופיע סמל של מזרקת מים קטנה (מגבים).',
-        'פתח את המכסה (הוא פשוט נשלף למעלה).',
-        'שפוך את הנוזל הכחול פנימה עד שאתה רואה שהמיכל כמעט מלא.',
-        'סגור את המכסה בלחיצה עד שיינעל.'
-      ]
-    },
-    { 
-      id: 'tire', 
-      name: "החלפת גלגל (פנצ'ר)", 
-      icon: <Wrench className="w-6 h-6" />, 
-      desc: "מדריך חירום: איך משתמשים בג'ק ומחליפים גלגל ב-i20.",
-      tools: "גלגל רזרבי, ג'ק ומפתח ברגים (נמצאים מתחת לשטיח בתא המטען)",
-      specificTip: "ב-i20, הג'ק והמפתח נמצאים בתוך תיק שחור קטן שיושב ממש בתוך הקימור של הגלגל הרזרבי בתא המטען.",
-      steps: [
-        'עצור רחוק מהכביש. פתח תא מטען, הרם את השטיח והוצא את הגלגל הרזרבי ואת התיק עם הכלים.',
-        'מה זה ג\'ק? זהו מכשיר מתכת בצורת מעוין שמרים את האוטו. מה זה מפתח? מוט מתכת בצורת ר\' לפתיחת ברגים.',
-        'לפני שמרימים את האוטו: השתמש במפתח כדי לסובב את הברגים של הגלגל חצי סיבוב שמאלה (נגד כיוון השעון). הם קשים, אפשר להיעזר ברגל.',
-        'מקם את הג\'ק: מתחת לאוטו, קרוב לגלגל המפונצ\'ר, יש פס מתכת עם חריץ ייעודי. סובב את ידית הג\'ק עד שהאוטו עולה והגלגל באוויר.',
-        'הוצא את הברגים לגמרי, שלוף את הגלגל המפונצ\'ר ושים במקומו את הרזרבי. סגור את הברגים עם היד, הורד את הג\'ק ואז חזק את הברגים חזק עם המפתח.'
-      ]
-    }
-  ];
-
-  const startTask = (task) => {
-    setCurrentTask(task);
-    setTaskProgress(0);
-    setStep('maintenance');
-  };
-
-  const nextStep = () => {
-    if (taskProgress < currentTask.steps.length - 1) {
-      setTaskProgress(prev => prev + 1);
-    } else {
-      if (!completedTasks.includes(currentTask.id)) {
-        setCompletedTasks(prev => [...prev, currentTask.id]);
-      }
-      setStep('dashboard');
-      setCurrentTask(null);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-right" dir="rtl">
-      <div className="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
         
-        {/* Header */}
-        <header className="mb-8 flex flex-col items-center">
-          <div className="bg-blue-100 p-3 rounded-2xl mb-4">
-            <Car className="w-10 h-10 text-blue-600" />
-          </div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">תחזוקת יונדאי i20</h1>
-          <div className="flex gap-2 text-sm text-slate-500 bg-white px-4 py-1 rounded-full shadow-sm border border-slate-100">
-             <span className="font-bold">{myCarDetails.plateNumber}</span>
-             <span>|</span>
-             <span>{myCarDetails.model}</span>
-          </div>
+        <!-- Header -->
+        <header class="mb-8 flex flex-col items-center text-center">
+            <div class="bg-blue-600 text-white p-4 rounded-3xl shadow-lg mb-4">
+                <i class="fas fa-car text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-1">מדריך תחזוקה יונדאי i20</h1>
+            <div class="flex gap-2 text-sm font-semibold bg-white px-4 py-1 rounded-full shadow-sm border border-slate-200">
+                <span class="text-blue-600">478-97-603</span>
+                <span class="text-slate-300">|</span>
+                <span class="text-slate-500">יונדאי i20</span>
+            </div>
         </header>
 
-        {/* Dashboard */}
-        {step === 'dashboard' && (
-          <div className="animate-in slide-in-from-bottom duration-500 space-y-6">
+        <!-- Main Dashboard -->
+        <div id="dashboard" class="space-y-6">
             
-            {/* Personal Info Card */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <div className="flex items-center gap-2 mb-3 text-blue-600">
-                  <ShieldCheck className="w-5 h-5" />
-                  <h3 className="font-bold">פרטי ביטוח</h3>
-                </div>
-                <div className="space-y-1 text-sm">
-                  <p className="text-slate-700"><span className="text-slate-400">חברה:</span> {myCarDetails.insuranceCompany}</p>
-                  <p className="text-slate-700"><span className="text-slate-400">סוג:</span> {myCarDetails.insuranceType}</p>
-                  <div className="flex items-center gap-1 text-amber-600 font-medium mt-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>בתוקף עד: {myCarDetails.insuranceExpiry}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <div className="flex items-center gap-2 mb-3 text-blue-600">
-                  <Wind className="w-5 h-5" />
-                  <h3 className="font-bold">הגדרות טכניות</h3>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm">
-                    <p className="text-slate-400 italic">לחץ אוויר מומלץ:</p>
-                    <p className="text-2xl font-black text-slate-800">{myCarDetails.requiredPSI} PSI</p>
-                  </div>
-                  <div className="bg-blue-50 p-3 rounded-full text-blue-600">
-                    <Info className="w-6 h-6" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-blue-600 text-white p-6 rounded-3xl shadow-lg flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-1">מצב התקדמות הלימוד</h2>
-                <p className="opacity-90">השלמת {completedTasks.length} מתוך {maintenanceTasks.length} משימות</p>
-              </div>
-              <div className="hidden sm:block">
-                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl">
-                  🚗
-                </div>
-              </div>
-            </div>
-
-            <h3 className="text-lg font-bold text-slate-700 mr-2">מה נלמד היום?</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {maintenanceTasks.map((task) => (
-                <button 
-                  key={task.id}
-                  onClick={() => startTask(task)}
-                  className={`bg-white p-6 rounded-2xl shadow-sm border-2 transition-all text-right flex flex-col hover:shadow-md ${completedTasks.includes(task.id) ? 'border-green-100' : 'border-transparent hover:border-blue-200'}`}
-                >
-                  <div className="flex items-center justify-between w-full mb-3">
-                    <div className={`p-3 rounded-xl ${completedTasks.includes(task.id) ? 'bg-green-100 text-green-600' : 'bg-blue-50 text-blue-500'}`}>
-                      {task.icon}
+            <!-- Personal Info Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Insurance Card -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-2 mb-3 text-blue-600">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3 class="font-bold">פרטי ביטוח</h3>
                     </div>
-                    {completedTasks.includes(task.id) && <CheckCircle2 className="w-6 h-6 text-green-500" />}
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-1">{task.name}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-4">{task.desc}</p>
-                  <div className="mt-auto flex items-center gap-2 text-blue-600 font-bold text-sm">
-                    <span>לחץ להסבר מפורט</span>
-                    <ArrowLeft className="w-4 h-4" />
-                  </div>
+                    <div class="space-y-1 text-sm">
+                        <p><span class="text-slate-400">חברה:</span> איילון (הסתדרות המורים)</p>
+                        <p><span class="text-slate-400">סוג:</span> חובה + מקיף מורחב</p>
+                        <div class="flex items-center gap-1 text-amber-600 font-bold mt-2">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>בתוקף עד: 30.11.2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PSI Card -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1 text-blue-600">
+                            <i class="fas fa-wind"></i>
+                            <h3 class="font-bold">לחץ אוויר נדרש</h3>
+                        </div>
+                        <p class="text-3xl font-black text-slate-800">34 PSI</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-full text-blue-600">
+                        <i class="fas fa-info-circle text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 pr-2">משימות תחזוקה</h3>
+            
+            <!-- Tasks Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Air Task -->
+                <button onclick="startTask('air')" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-transparent hover:border-blue-200 transition-all text-right group">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-compress-arrows-alt text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold mb-1">מילוי אוויר בגלגלים</h4>
+                    <p class="text-slate-500 text-sm mb-4">איך למלא בדיוק 34 PSI בתחנת הדלק.</p>
+                    <div class="flex items-center gap-1 text-blue-600 font-bold text-xs uppercase tracking-wider">
+                        <span>התחל מדריך</span>
+                        <i class="fas fa-chevron-left mr-1"></i>
+                    </div>
                 </button>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* Maintenance Simulation */}
-        {step === 'maintenance' && (
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden animate-in zoom-in duration-300 border border-slate-200">
-            <div className="bg-slate-900 p-6 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-500 rounded-lg text-white">
-                    {currentTask.icon}
-                  </div>
-                  <h2 className="text-xl font-bold">{currentTask.name}</h2>
-                </div>
-                <button onClick={() => setStep('dashboard')} className="text-white/60 hover:text-white">סגור X</button>
-              </div>
-              <div className="flex items-center gap-2 text-slate-400 text-sm bg-slate-800 p-3 rounded-xl">
-                <Package className="w-4 h-4 text-blue-400" />
-                <span><strong>מה צריך?</strong> {currentTask.tools}</span>
-              </div>
-            </div>
-
-            <div className="p-8">
-              <div className="flex gap-2 mb-8">
-                {currentTask.steps.map((_, idx) => (
-                  <div 
-                    key={idx}
-                    className={`h-2 flex-1 rounded-full transition-all duration-500 ${idx <= taskProgress ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'bg-slate-100'}`}
-                  />
-                ))}
-              </div>
-
-              <div className="min-h-[350px] flex flex-col">
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg">
-                    {taskProgress + 1}
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-800">שלב הביצוע:</h3>
-                </div>
-
-                <div className="bg-slate-50 p-6 rounded-2xl border-r-4 border-blue-600 mb-8 grow">
-                  <p className="text-xl text-slate-700 leading-relaxed font-medium">
-                    {currentTask.steps[taskProgress]}
-                  </p>
-                </div>
-                
-                {/* Fixed context-aware tip logic */}
-                <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl text-blue-800 text-sm">
-                  <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong>דגש לרכב {myCarDetails.plateNumber}:</strong>
-                    <p className="mt-1">{currentTask.specificTip}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-                <button
-                  disabled={taskProgress === 0}
-                  onClick={() => setTaskProgress(prev => prev - 1)}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${taskProgress === 0 ? 'text-slate-300' : 'text-slate-600 hover:bg-slate-50'}`}
-                >
-                  <ArrowRight className="w-4 h-4" />
-                  הקודם
+                <!-- Oil Task -->
+                <button onclick="startTask('oil')" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-transparent hover:border-blue-200 transition-all text-right group">
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl w-fit mb-4 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-oil-can text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold mb-1">בדיקת שמן מנוע</h4>
+                    <p class="text-slate-500 text-sm mb-4">איך למצוא את המדיד הצהוב ביונדאי i20.</p>
+                    <div class="flex items-center gap-1 text-blue-600 font-bold text-xs">
+                        <span>התחל מדריך</span>
+                        <i class="fas fa-chevron-left mr-1"></i>
+                    </div>
                 </button>
-                <button
-                  onClick={nextStep}
-                  className="flex items-center gap-2 px-10 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 shadow-lg transition-all active:scale-95"
-                >
-                  {taskProgress === currentTask.steps.length - 1 ? 'סיימתי, הבנתי!' : 'המשך לשלב הבא'}
-                  <ArrowLeft className="w-4 h-4" />
+
+                <!-- Water Task -->
+                <button onclick="startTask('water')" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-transparent hover:border-blue-200 transition-all text-right group">
+                    <div class="p-3 bg-cyan-50 text-cyan-600 rounded-xl w-fit mb-4 group-hover:bg-cyan-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-tint text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold mb-1">מים לוישרים</h4>
+                    <p class="text-slate-500 text-sm mb-4">מילוי נוזל כחול במיכל המיועד.</p>
+                    <div class="flex items-center gap-1 text-blue-600 font-bold text-xs">
+                        <span>התחל מדריך</span>
+                        <i class="fas fa-chevron-left mr-1"></i>
+                    </div>
                 </button>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* FAQ Section */}
-        {step === 'dashboard' && (
-          <div className="mt-8 space-y-4">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-              <div className="flex items-center gap-2 mb-4 text-slate-800 font-bold">
-                <HelpCircle className="w-5 h-5 text-blue-500" />
-                <h4>מידע מהיר ועזרה</h4>
-              </div>
-              <div className="space-y-4 text-sm">
-                <details className="group p-3 bg-slate-50 rounded-lg cursor-pointer">
-                  <summary className="font-bold list-none flex justify-between items-center">
-                    איפה הידית שפותחת את מכסה המנוע ב-i20?
-                    <span className="transition-transform group-open:rotate-180">▼</span>
-                  </summary>
-                  <p className="mt-2 text-slate-600">ליד רגל שמאל של הנהג, בדופן הפנימית למטה. משכי לכיוונך עד שיהיה "קלאק".</p>
-                </details>
-                <details className="group p-3 bg-slate-50 rounded-lg cursor-pointer">
-                  <summary className="font-bold list-none flex justify-between items-center">
-                    איפה מוצאים את הג'ק ומפתח הברגים?
-                    <span className="transition-transform group-open:rotate-180">▼</span>
-                  </summary>
-                  <p className="mt-2 text-slate-600">פתחי תא מטען, הרימי את שטיח הרצפה. הכלים נמצאים בתוך תיק שחור קטן בתוך הגלגל הרזרבי.</p>
-                </details>
-              </div>
+                <!-- Wheel Task -->
+                <button onclick="startTask('tire')" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-transparent hover:border-blue-200 transition-all text-right group">
+                    <div class="p-3 bg-slate-100 text-slate-600 rounded-xl w-fit mb-4 group-hover:bg-slate-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-tools text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold mb-1">החלפת גלגל (ג'ק)</h4>
+                    <p class="text-slate-500 text-sm mb-4">איפה הכלים ואיך להרים את האוטו בבטחה.</p>
+                    <div class="flex items-center gap-1 text-blue-600 font-bold text-xs">
+                        <span>התחל מדריך</span>
+                        <i class="fas fa-chevron-left mr-1"></i>
+                    </div>
+                </button>
             </div>
-          </div>
-        )}
 
-        <footer className="mt-12 text-center text-slate-400 text-xs pb-8">
-          <p>© מדריך אישי לרכב {myCarDetails.plateNumber} | בטיחות מעל הכל</p>
+            <!-- FAQ Section -->
+            <div class="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h4 class="font-bold flex items-center gap-2 mb-4">
+                    <i class="fas fa-question-circle text-blue-500"></i>
+                    עזרה מהירה ליונדאי שלך
+                </h4>
+                <div class="space-y-3">
+                    <div class="p-3 bg-slate-50 rounded-xl text-sm">
+                        <p class="font-bold text-slate-700">איפה הידית למכסה המנוע?</p>
+                        <p class="text-slate-500 mt-1">ליד רגל שמאל של הנהג, למטה בדופן הפנימית.</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl text-sm">
+                        <p class="font-bold text-slate-700">מה זה ג'ק ואיפה הוא?</p>
+                        <p class="text-slate-500 mt-1">מכשיר מתכת להרמת הרכב. הוא נמצא בתא המטען, בתוך תיק שחור קטן בתוך הגלגל הרזרבי.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task View (Hidden by default) -->
+        <div id="task-view" class="hidden animate-in fade-in duration-300">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+                <div class="bg-slate-900 p-6 text-white flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div id="task-icon-container" class="p-2 bg-blue-500 rounded-lg">
+                            <i id="task-icon" class="fas fa-star text-white"></i>
+                        </div>
+                        <h2 id="task-title" class="text-xl font-bold">שם המשימה</h2>
+                    </div>
+                    <button onclick="closeTask()" class="text-white/60 hover:text-white"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div class="p-8">
+                    <!-- Progress Tracker -->
+                    <div id="progress-bar" class="flex gap-2 mb-8"></div>
+
+                    <div class="min-h-[300px] flex flex-col">
+                        <div class="mb-6 flex items-center gap-3">
+                            <div id="step-number" class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg">1</div>
+                            <h3 class="text-2xl font-bold text-slate-800">מה עושים עכשיו?</h3>
+                        </div>
+
+                        <div class="bg-slate-50 p-6 rounded-2xl border-r-4 border-blue-600 mb-8 grow">
+                            <p id="step-text" class="text-xl text-slate-700 leading-relaxed font-medium"></p>
+                        </div>
+
+                        <!-- Specific Context Tip -->
+                        <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl text-blue-800 text-sm">
+                            <i class="fas fa-lightbulb mt-1"></i>
+                            <div>
+                                <strong id="tip-title">דגש לרכב 478-97-603:</strong>
+                                <p id="tip-text" class="mt-1"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
+                        <button id="prev-btn" onclick="prevStep()" class="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-slate-400 hover:bg-slate-50 transition-all">
+                            <i class="fas fa-arrow-right"></i>
+                            הקודם
+                        </button>
+                        <button id="next-btn" onclick="nextStep()" class="flex items-center gap-2 px-10 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 shadow-lg transition-all active:scale-95">
+                            <span id="next-btn-text">המשך</span>
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-slate-400 text-xs pb-8">
+            <p>© מדריך תחזוקה אישי ליונדאי i20 | הכל למען הבטיחות שלך</p>
         </footer>
 
-      </div>
     </div>
-  );
-};
 
-export default App;
+    <script>
+        const tasks = {
+            air: {
+                title: "מילוי אוויר בגלגלים",
+                icon: "fa-compress-arrows-alt",
+                tip: "ביונדאי i20 שלך הגדרת לחץ אוויר של 34 PSI לכל הגלגלים.",
+                steps: [
+                    "בדוק את היעד: עבור הרכב שלך הגדרנו 34 PSI כפי שביקשת.",
+                    "הסר את פקק הפלסטיק השחור הקטן מהונטיל (הצינורית הקטנה שבולטת מהגלגל).",
+                    "במכונת האוויר בתחנה, כוון את המספר ל-34.",
+                    "הצמד את פיית הצינור לונטיל בחוזקה. תשמע 'פססס' ואז צפצוף כשהמכונה מסיימת.",
+                    "החזר את הפקק הקטן למקום כדי שלא יכנס לכלוך."
+                ]
+            },
+            oil: {
+                title: "בדיקת שמן מנוע",
+                icon: "fa-oil-can",
+                tip: "ביונדאי i20, ידית המדיד היא טבעת פלסטיק צהובה שנמצאת ממש במרכז המנוע.",
+                steps: [
+                    "ודא שהרכב עומד במישור ושהמנוע כבוי וקר (לפחות 10 דקות אחרי נסיעה).",
+                    "פתח את מכסה המנוע: משוך בידית שנמצאת למטה משמאל להגה (ליד הדוושות).",
+                    "חפש ידית פלסטיק צהובה (המדיד) ומשוך אותה החוצה לגמרי.",
+                    "נגב את המדיד עם נייר סופג - כרגע הוא מלוכלך ולא מדויק.",
+                    "הכנס את המדיד חזרה עד הסוף ומשוך שוב. ודא שהשמן נמצא בין החורים L ו-F."
+                ]
+            },
+            water: {
+                title: "נוזל שמשות",
+                icon: "fa-tint",
+                tip: "מלאי רק נוזל כחול ייעודי. מים מהברז יוצרים אבנית שסותמת את הצינורות ביונדאי.",
+                steps: [
+                    "פתח את מכסה המנוע והעמד אותו על המוט.",
+                    "זהה את המכסה הכחול שעליו סמל של מזרקת מים (וישרים).",
+                    "פתח את המכסה (הוא נשלף במשיכה).",
+                    "שפוך את הנוזל הכחול פנימה עד שהמיכל כמעט מלא.",
+                    "סגור את המכסה בלחיצה עד שיינעל."
+                ]
+            },
+            tire: {
+                title: "החלפת גלגל",
+                icon: "fa-tools",
+                tip: "הג'ק והמפתח נמצאים בתוך תיק שחור בתוך הקימור של הגלגל הרזרבי בתא המטען.",
+                steps: [
+                    "עצור רחוק מהכביש. הוצא את הגלגל הרזרבי ואת התיק עם הכלים מתא המטען.",
+                    "ג'ק הוא מכשיר המתכת להרמת הרכב. מפתח הוא המוט לפתיחת הברגים.",
+                    "לפני ההרמה: סובב את ברגי הגלגל חצי סיבוב שמאלה עם המפתח (אפשר להיעזר ברגל).",
+                    "מקם את הג'ק מתחת לפס המתכת בחריץ הייעודי וסובב עד שהגלגל באוויר.",
+                    "הוצא ברגים, החלף גלגל, חזק ברגים ביד, הורד ג'ק ואז חזק סופית עם המפתח."
+                ]
+            }
+        };
+
+        let currentActiveTask = null;
+        let currentStepIdx = 0;
+
+        function startTask(taskId) {
+            currentActiveTask = tasks[taskId];
+            currentStepIdx = 0;
+            
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('task-view').classList.remove('hidden');
+            
+            updateTaskUI();
+        }
+
+        function updateTaskUI() {
+            const task = currentActiveTask;
+            document.getElementById('task-title').innerText = task.title;
+            document.getElementById('task-icon').className = `fas ${task.icon} text-white`;
+            document.getElementById('step-text').innerText = task.steps[currentStepIdx];
+            document.getElementById('step-number').innerText = currentStepIdx + 1;
+            document.getElementById('tip-text').innerText = task.tip;
+            
+            // Progress Bar
+            const progressContainer = document.getElementById('progress-bar');
+            progressContainer.innerHTML = '';
+            task.steps.forEach((_, idx) => {
+                const bar = document.createElement('div');
+                bar.className = `h-2 flex-1 rounded-full transition-all duration-500 ${idx <= currentStepIdx ? 'bg-blue-500 shadow-md' : 'bg-slate-100'}`;
+                progressContainer.appendChild(bar);
+            });
+
+            // Buttons
+            document.getElementById('prev-btn').style.visibility = currentStepIdx === 0 ? 'hidden' : 'visible';
+            document.getElementById('next-btn-text').innerText = currentStepIdx === task.steps.length - 1 ? 'סיימתי' : 'המשך';
+        }
+
+        function nextStep() {
+            if (currentStepIdx < currentActiveTask.steps.length - 1) {
+                currentStepIdx++;
+                updateTaskUI();
+            } else {
+                closeTask();
+            }
+        }
+
+        function prevStep() {
+            if (currentStepIdx > 0) {
+                currentStepIdx--;
+                updateTaskUI();
+            }
+        }
+
+        function closeTask() {
+            document.getElementById('task-view').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+    </script>
+</body>
+</html>
